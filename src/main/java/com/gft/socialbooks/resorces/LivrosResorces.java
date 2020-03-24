@@ -1,7 +1,7 @@
 package com.gft.socialbooks.resorces;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.gft.socialbooks.domain.Comentario;
 import com.gft.socialbooks.domain.Livro;
 import com.gft.socialbooks.services.LivrosService;
 
@@ -35,7 +38,7 @@ public class LivrosResorces {
 
 	// GET (ID)
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Optional<Livro>> GET(@PathVariable("id") Long id) {
+	public ResponseEntity<?> GET(@PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(livrosservice.buscar(id));
 	}
 
@@ -53,4 +56,22 @@ public class LivrosResorces {
 		livrosservice.update(livro);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
+
+	// ADICIONAR COMENTARIO
+	@RequestMapping(value = "/{id}/comentarios", method = RequestMethod.POST)
+	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long livroID,
+			@RequestBody Comentario comentario) {
+		livrosservice.salvarComentario(livroID, comentario);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+		return ResponseEntity.created(uri).build();
+	}
+
+	// LISTAR COMENTARIO
+	@RequestMapping(value = "/{id}/comentarios", method = RequestMethod.GET)
+	public ResponseEntity<List<Comentario>> listarComentario(@PathVariable("id") Long livroID) {
+		List<Comentario> comentarios = livrosservice.listarComentarios(livroID);
+		return ResponseEntity.status(HttpStatus.OK).body(comentarios);
+	}
+
 }
