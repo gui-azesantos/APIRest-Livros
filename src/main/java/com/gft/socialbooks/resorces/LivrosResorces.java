@@ -1,8 +1,8 @@
 package com.gft.socialbooks.resorces;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,57 +11,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.gft.socialbooks.domain.Livro;
-import com.gft.socialbooks.repository.LivrosRepository;
+import com.gft.socialbooks.services.LivrosService;
 
 @RestController
 @RequestMapping("/livros")
 public class LivrosResorces {
 	@Autowired
-	private LivrosRepository livrosRepository;
+	private LivrosService livrosservice;
 
+	// GET
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Livro>> listar() {
-		return ResponseEntity.status(HttpStatus.OK).body(livrosRepository.findAll());
-
+		return ResponseEntity.status(HttpStatus.OK).body(livrosservice.listar());
 	}
 
+	// POST
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> salvar(@RequestBody Livro livro) {
-		livro = livrosRepository.save(livro);
-
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(livro.getId()).toUri();
-
-		return ResponseEntity.created(uri).build();
+	public ResponseEntity<Void> salvar(@Valid @RequestBody Livro livro) {
+		livrosservice.salvar(livro);
+		return null;
 	}
 
+	// GET (ID)
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity buscar(@PathVariable("id") Long id) {
-		Optional<Livro> livro = livrosRepository.findById(id);
-		if (livrosRepository.existsById(id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(livro);
-		}
+	public ResponseEntity<Optional<Livro>> GET(@PathVariable("id") Long id) {
+		return ResponseEntity.status(HttpStatus.OK).body(livrosservice.buscar(id));
+	}
+
+	// DELETE
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
+		this.livrosservice.delete(id);
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> excluir(@PathVariable("id") Livro livro) {
-
-		try {
-			this.livrosRepository.delete(livro);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-	}
-
+	// PUT
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable("id") Long id) {
 		livro.setId(id);
-		livrosRepository.save(livro);
-		return ResponseEntity.noContent().build();
+		livrosservice.update(livro);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
