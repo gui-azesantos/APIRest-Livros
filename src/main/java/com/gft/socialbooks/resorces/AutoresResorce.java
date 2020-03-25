@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,8 @@ public class AutoresResorce {
 	private AutoresServices autoresservice;
 
 	// GET
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<List<Autor>> listar() {
 		return ResponseEntity.status(HttpStatus.OK).body(autoresservice.listar());
 	}
@@ -34,7 +36,7 @@ public class AutoresResorce {
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> salvar(@Valid @RequestBody Autor autor) {
 		autoresservice.salvar(autor);
-		return null;
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	// GET (ID)
@@ -47,12 +49,12 @@ public class AutoresResorce {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
 		this.autoresservice.delete(id);
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	// PUT
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> atualizar(@RequestBody Autor autor, @PathVariable("id") Long id) {
+	public ResponseEntity<Void> atualizar(@Valid @RequestBody Autor autor, @PathVariable("id") Long id) {
 		autor.setId(id);
 		autoresservice.update(autor);
 		return ResponseEntity.status(HttpStatus.OK).build();

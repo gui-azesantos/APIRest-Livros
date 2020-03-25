@@ -2,8 +2,12 @@ package com.gft.socialbooks.resorces;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,14 +30,17 @@ public class LivrosResorces {
 	// GET
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Livro>> listar() {
-		return ResponseEntity.status(HttpStatus.OK).body(livrosservice.listar());
+		
+		CacheControl cachecontrol = CacheControl.maxAge(20, TimeUnit.SECONDS);
+		
+		return ResponseEntity.status(HttpStatus.OK).cacheControl(cachecontrol).body(livrosservice.listar());
 	}
 
 	// POST
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> salvar(@Valid @RequestBody Livro livro) {
 		livrosservice.salvar(livro);
-		return null;
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	// GET (ID)
@@ -46,12 +53,12 @@ public class LivrosResorces {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> excluir(@PathVariable("id") Long id) {
 		this.livrosservice.delete(id);
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	// PUT
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> atualizar(@RequestBody Livro livro, @PathVariable("id") Long id) {
+	public ResponseEntity<Void> atualizar(@Valid @RequestBody Livro livro, @PathVariable("id") Long id) {
 		livro.setId(id);
 		livrosservice.update(livro);
 		return ResponseEntity.status(HttpStatus.OK).build();
@@ -59,7 +66,7 @@ public class LivrosResorces {
 
 	// ADICIONAR COMENTARIO
 	@RequestMapping(value = "/{id}/comentarios", method = RequestMethod.POST)
-	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long livroID,
+	public ResponseEntity<Void> adicionarComentario(@Valid @PathVariable("id") Long livroID,
 			@RequestBody Comentario comentario) {
 		livrosservice.salvarComentario(livroID, comentario);
 
