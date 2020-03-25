@@ -8,29 +8,47 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Autor", description = "Representa um autor")
 @Entity
 public class Autor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(value = "ID do Autor", example = "1")
 	private Long id;
+	
 	@JsonInclude(Include.NON_EMPTY)
 	@NotEmpty(message = "O campo nome não pode ser vazio")
+	@ApiModelProperty(value = "Nome de livro", example = "Guilherme Azevedo")
 	private String nome;
+	
 	@JsonInclude(Include.NON_NULL)
 	@NotNull(message = "A campo de data de nascimento não pode ser vazio")
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@JsonFormat(pattern = "dd/MM/yyyy")
+	@Temporal(TemporalType.DATE)
+	@ApiModelProperty(value = "Data de nascimento do autor", example = "25/03/1988")
 	private Date nascimento;
+	
+	
 	@JsonInclude(Include.NON_EMPTY)
 	@NotNull(message = "A campo de nacionalidade não pode ser vazio")
-	private String nascionalidade;
+	@ApiModelProperty(value = "Nacionalidade do autor", example = "Brasileiro")
+	private String nacionalidade;
 	
 	@OneToMany(mappedBy = "autor")
 	@JsonIgnore
@@ -61,11 +79,11 @@ public class Autor {
 	}
 
 	public String getNascionalidade() {
-		return nascionalidade;
+		return nacionalidade;
 	}
 
-	public void setNascionalidade(String nascionalidade) {
-		this.nascionalidade = nascionalidade;
+	public void setNascionalidade(String nacionalidade) {
+		this.nacionalidade = nacionalidade;
 	}
 
 	public List<Livro> getLivros() {
