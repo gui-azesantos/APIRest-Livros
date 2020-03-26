@@ -2,6 +2,8 @@ package com.gft.socialbooks.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,11 @@ public class AutoresServices {
 
 	// BUSCAR
 	public Autor buscar(Long id) {
-		Autor autor= repository.findById(id).orElse(null);
+		Autor autor = repository.findById(id).orElse(null);
 		if (autor == null) {
-			throw new AutorNaoEncontradoException("O livro não pôde ser encontrado.");
+			throw new AutorNaoEncontradoException("O autor não pôde ser encontrado.");
 		}
-		return autor ;
+		return autor;
 	}
 
 	// SALVAR
@@ -47,19 +49,23 @@ public class AutoresServices {
 		try {
 			this.repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new AutorNaoEncontradoException("O Livro não pode ser encontrado");
+			throw new AutorNaoEncontradoException("O Autor não pôde ser encontrado");
 		}
 	}
 
 	// ATUALIZAR
 	public void update(Autor autor) {
-		isExiste(autor);
-		repository.save(autor);
+		try {
+			isExisteAutor(autor);
+			repository.save(autor);
+		} catch (EntityNotFoundException e) {
+			throw new AutorNaoEncontradoException("O Autor não pôde ser encontrado");
+		}
 
 	}
 
 	// VERIFICAR EXISTENCIA
-	private void isExiste(Autor autor) {
+	public void isExisteAutor(Autor autor) {
 		buscar(autor.getId());
 	}
 }

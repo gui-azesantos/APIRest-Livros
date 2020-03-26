@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class Autor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ApiModelProperty(value = "ID do Autor", example = "1")
+	@ApiModelProperty(value = "ID do Autor", example = "")
 	private Long id;
 	
 	@JsonInclude(Include.NON_EMPTY)
@@ -48,6 +48,8 @@ public class Autor {
 	@JsonInclude(Include.NON_EMPTY)
 	@NotNull(message = "A campo de nacionalidade não pode ser vazio")
 	@ApiModelProperty(value = "Nacionalidade do autor", example = "Brasileiro")
+	
+	
 	private String nacionalidade;
 	
 	@OneToMany(mappedBy = "autor")
@@ -78,11 +80,13 @@ public class Autor {
 		this.nascimento = nascimento;
 	}
 
-	public String getNascionalidade() {
+	
+
+	public String getNacionalidade() {
 		return nacionalidade;
 	}
 
-	public void setNascionalidade(String nacionalidade) {
+	public void setNacionalidade(String nacionalidade) {
 		this.nacionalidade = nacionalidade;
 	}
 

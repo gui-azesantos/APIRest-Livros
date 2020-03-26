@@ -2,6 +2,7 @@ package com.gft.socialbooks.services;
 
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ public class LivrosService {
 	private LivrosRepository repository;
 	@Autowired
 	private ComentariosRepository comentariosrepository;
+
+	private AutoresServices livrosservice;
 
 	// LISTAR
 	public List<Livro> listar() {
@@ -57,13 +60,14 @@ public class LivrosService {
 
 	// ATUALIZAR
 	public void update(Livro livro) {
-		isExiste(livro);
+		isExisteLivro(livro);
+		livrosservice.isExisteAutor(livro.getAutor());
 		repository.save(livro);
 
 	}
 
-	// VERIFICAR EXISTENCIA
-	private void isExiste(Livro livro) {
+	// VERIFICAR EXISTÊNCIADO LIVRO
+	private void isExisteLivro(Livro livro) {
 		buscar(livro.getId());
 	}
 
@@ -75,8 +79,9 @@ public class LivrosService {
 
 		return comentariosrepository.save(comentario);
 	}
-	//LISTAR COMENTARIOS
-	public List<Comentario> listarComentarios (Long livroID){
+
+	// LISTAR COMENTARIOS
+	public List<Comentario> listarComentarios(Long livroID) {
 		Livro livro = buscar(livroID);
 		return livro.getComentarios();
 	}

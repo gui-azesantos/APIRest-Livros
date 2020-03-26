@@ -20,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.gft.socialbooks.domain.Comentario;
 import com.gft.socialbooks.domain.Livro;
 import com.gft.socialbooks.services.LivrosService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,16 +35,17 @@ public class LivrosResorces {
 	@ApiOperation("Lista livros")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Livro>> listar() {
-		
+
 		CacheControl cachecontrol = CacheControl.maxAge(20, TimeUnit.SECONDS);
-		
+
 		return ResponseEntity.status(HttpStatus.OK).cacheControl(cachecontrol).body(livrosservice.listar());
 	}
 
 	// POST
 	@ApiOperation("Criar livro")
-	@RequestMapping( method = RequestMethod.POST)
-	public ResponseEntity<Void> salvar(@ApiParam(name = "corpo", value="Criação de um novo livro")@Valid @RequestBody Livro livro) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Void> salvar(
+			@ApiParam(name = "corpo", value = "Criação de um novo livro") @Valid @RequestBody Livro livro) {
 		livrosservice.salvar(livro);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -68,7 +68,9 @@ public class LivrosResorces {
 	// PUT
 	@ApiOperation("Atualizar livro")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> atualizar(@ApiParam(name = "corpo", value="Atualização de um autor")@Valid @RequestBody Livro livro, @PathVariable("id") Long id) {
+	public ResponseEntity<Void> atualizar(
+			@ApiParam(name = "corpo", value = "Atualização de um livro") @Valid @RequestBody Livro livro,
+			@PathVariable("id") Long id) {
 		livro.setId(id);
 		livrosservice.update(livro);
 		return ResponseEntity.status(HttpStatus.OK).build();
@@ -77,7 +79,7 @@ public class LivrosResorces {
 	// ADICIONAR COMENTARIO
 	@ApiOperation("Adicionar comentário")
 	@RequestMapping(value = "/{id}/comentarios", method = RequestMethod.POST)
-	public ResponseEntity<Void> adicionarComentario(@Valid @PathVariable("id") Long livroID,
+	public ResponseEntity<Void> adicionarComentario(@ApiParam("ID do livro") @Valid @PathVariable("id") Long livroID,
 			@RequestBody Comentario comentario) {
 		livrosservice.salvarComentario(livroID, comentario);
 
@@ -88,7 +90,8 @@ public class LivrosResorces {
 	// LISTAR COMENTARIO
 	@ApiOperation("Lista comentários")
 	@RequestMapping(value = "/{id}/comentarios", method = RequestMethod.GET)
-	public ResponseEntity<List<Comentario>> listarComentario(@PathVariable("id") Long livroID) {
+	public ResponseEntity<List<Comentario>> listarComentario(
+			@ApiParam("ID do livro") @PathVariable("id") Long livroID) {
 		List<Comentario> comentarios = livrosservice.listarComentarios(livroID);
 		return ResponseEntity.status(HttpStatus.OK).body(comentarios);
 	}

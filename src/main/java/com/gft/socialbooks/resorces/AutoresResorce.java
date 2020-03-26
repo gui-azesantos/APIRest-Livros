@@ -48,14 +48,14 @@ public class AutoresResorce {
 	// GET (ID)
 	@ApiOperation("Lista autor por ID")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> GET(@ApiParam("ID do livro") @PathVariable("id") Long id) {
+	public ResponseEntity<?> GET(@ApiParam("ID do autor") @PathVariable("id") Long id) {
 		return ResponseEntity.status(HttpStatus.OK).body(autoresservice.buscar(id));
 	}
 
 	// DELETE
 	@ApiOperation("Deletar autor")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> excluir(@ApiParam("ID do livro") @PathVariable("id") Long id) {
+	public ResponseEntity<Void> excluir(@ApiParam("ID do autor") @PathVariable("id") Long id) {
 		this.autoresservice.delete(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
