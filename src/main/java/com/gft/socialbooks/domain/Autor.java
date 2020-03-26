@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class Autor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ApiModelProperty(value = "ID do Autor", example = "")
+	@ApiModelProperty(value = "ID do Autor", example = "1")
 	private Long id;
 	
 	@JsonInclude(Include.NON_EMPTY)
